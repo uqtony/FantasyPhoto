@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".PhotoViewerActivity">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@android:color/black" />
+    <!--<ImageView-->
+        <!--android:id="@+id/photoImageView"-->
+        <!--android:layout_width="345dp"-->
+        <!--android:layout_height="460dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:scaleType="fitXY"-->
+        <!--android:layout_marginTop="110dp"-->
+        <!--android:padding="15dp"-->
+        <!--android:background="@android:color/white"-->
+        <!--android:src="@android:color/white" />-->
+    <ImageView
+        android:id="@+id/photoImageView"
+        android:layout_width="345dp"
+        android:layout_height="460dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitXY"
+        android:layout_marginTop="260dp"
+        android:padding="15dp"
+        android:background="@android:color/white"
+        android:src="@android:color/white" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<ImageView-->
+            <!--android:id="@+id/qrImageView"-->
+            <!--android:layout_width="480dp"-->
+            <!--android:layout_height="480dp"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="110dp"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:src="@android:color/black" />-->
+        <ImageView
+            android:id="@+id/qrImageView"
+            android:layout_width="480dp"
+            android:layout_height="480dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="260dp"
+            android:scaleType="fitXY"
+            android:src="@android:color/black" />
+    </RelativeLayout>
+    <!--<TextView-->
+        <!--android:id="@+id/countDownToFinishTextView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="880dp"-->
+        <!--android:layout_marginLeft="330dp"-->
+        <!--android:visibility="invisible"-->
+        <!--android:text="10"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="36sp" />-->
+
+    <TextView
+        android:id="@+id/countDownToFinishTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1130dp"
+        android:layout_marginLeft="400dp"
+        android:visibility="invisible"
+        android:text="10"
+        android:textColor="@android:color/white"
+        android:textSize="36sp" />
+</FrameLayout>
