@@ -196,10 +196,14 @@ final public class PhotoFrameManager {
         //photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.style1));
         //photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.style2));
         //photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.style3));
-        photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.frame1));
-        photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.frame2));
-        photoAnimFrames.add(R.drawable.anim_frame1);
-        photoAnimFrames.add(R.drawable.anim_frame2);
+//        photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.frame1));
+//        photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.frame2));
+//        photoAnimFrames.add(R.drawable.anim_frame1);
+//        photoAnimFrames.add(R.drawable.anim_frame2);
+
+        photoFrames.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.new_photo_frame));
+        photoAnimFrames.add(R.drawable.new_photo_frame);
+
         currentIdx = 0;
         initAnimFrameImages();
     }

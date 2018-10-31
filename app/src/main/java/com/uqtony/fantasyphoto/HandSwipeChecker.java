@@ -1,5 +1,6 @@
 package com.uqtony.fantasyphoto;
 
+import android.graphics.Point;
 import android.util.Log;
 
 public class HandSwipeChecker {
@@ -66,6 +67,66 @@ public class HandSwipeChecker {
         lastArea = currentArea;
         // return 1;
         return 1;
+    }
+
+    Point lastPos = null;
+
+    volatile boolean isPrepareDetection = false;
+    final long PREPARE_DETECTION_TIME = 1000;
+
+    public synchronized int isSwipeInDistance(int x, int y){
+
+        long currentTime = System.currentTimeMillis();
+        int heightTreshold = (int)(previewWidth*0.625);
+        if (lastPos == null && (y > heightTreshold)) {
+            //Log.d(TAG, "[isSwipeInDistance] y not pass threshold");
+            return 0;
+        }
+        if (x == 701 && y <= -10) {
+            lastPos = null;
+            isPrepareDetection = true;
+            lastUpdateTime = currentTime;
+            return 0;
+        }
+        if (y <= 50) {
+            Log.d(TAG, "[isSwipeInDistance] x="+x+", y="+y);
+            lastPos = null;
+            isPrepareDetection = true;
+            lastUpdateTime = currentTime;
+            return 0;
+        }
+        if (isPrepareDetection) {
+            if ((currentTime - lastUpdateTime) > PREPARE_DETECTION_TIME) {
+                isPrepareDetection = false;
+            }
+            return 0;
+        }
+
+        if ((currentTime - lastUpdateTime) > EXPIRED_TIME) {
+            lastPos = null;
+            if (y <= heightTreshold) {
+                lastPos = new Point(x, y);
+            }
+            lastUpdateTime = currentTime;
+            //Log.d(TAG, "[isSwipeInDistance] is expired!");
+            return 0;
+        }
+
+        if (lastPos == null) {
+            //Log.d(TAG, "[isSwipeInDistance] last pos is null!");
+            lastPos = new Point(x, y);
+            return 0;
+        }
+
+        double distance = Math.sqrt(Math.pow(x - lastPos.x, 2) + Math.pow(y - lastPos.y, 2));
+        int offsetX = Math.abs(lastPos.x - x);
+        if (distance > 150 && offsetX > 100){
+            //Log.d(TAG, "[isSwipeInDistance]Yes!!!!! Is Swipe!!!!  lastPos=("+lastPos+"),  currentPos=("+x+", "+y+"), distance="+distance+", offsetX="+offsetX);
+            lastPos = null;
+            return 1;
+        }
+        //Log.d(TAG, "[isSwipeInDistance] No.......lastPos=("+lastPos+"),  currentPos=("+x+", "+y+"), distance="+distance+", offsetX="+offsetX);
+        return 0;
     }
 
     public synchronized int isSwipeFromCenter(int x, int y) {

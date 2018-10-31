@@ -19,10 +19,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+      <ImageView
+          android:id="@+id/backgroundImageView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:scaleType="fitXY"
+          android:src="@drawable/background" />
+
+      <!--<com.uqtony.fantasyphoto.AutoFitTextureView-->
+          <!--android:id="@+id/texture"-->
+          <!--android:layout_width="match_parent"-->
+          <!--android:layout_height="match_parent"/>-->
       <com.uqtony.fantasyphoto.AutoFitTextureView
           android:id="@+id/texture"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"/>
+          android:layout_width="458dp"
+          android:layout_height="634dp"
+          android:layout_marginStart="170dp"
+          android:layout_marginTop="403dp"
+          />
 
       <com.uqtony.fantasyphoto.OverlayView
           android:id="@+id/tracking_overlay"
@@ -34,10 +48,18 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
 
+      <!--<ImageView-->
+          <!--android:id="@+id/animFrameImageView"-->
+          <!--android:layout_width="match_parent"-->
+          <!--android:layout_height="match_parent"-->
+          <!--android:scaleType="fitXY"-->
+          <!--android:src="@android:color/black" />-->
       <ImageView
           android:id="@+id/animFrameImageView"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
+          android:layout_width="757dp"
+          android:layout_height="770dp"
+          android:layout_marginLeft="28dp"
+          android:layout_marginTop="331dp"
           android:scaleType="fitXY"
           android:src="@android:color/black" />
 
@@ -79,7 +101,7 @@
       <ImageView
           android:id="@+id/retakeImageView"
           android:layout_width="345dp"
-          android:layout_height="460dp"
+          android:layout_height="345dp"
           android:layout_gravity="center_horizontal"
           android:layout_alignParentTop="true"
           android:layout_centerHorizontal="true"

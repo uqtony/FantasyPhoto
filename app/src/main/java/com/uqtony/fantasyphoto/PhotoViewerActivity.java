@@ -80,7 +80,8 @@ public class PhotoViewerActivity extends Activity {
             Bitmap result = myBitmap.copy(Bitmap.Config.ARGB_8888, true);
             photoImageView.setImageBitmap(result);
             //Glide.with(this).load(imgFile).into(photoImageView);
-            Glide.with(this).asGif().load(R.drawable.retake_background_anim).into(imageView);
+            //Glide.with(this).asGif().load(R.drawable.retake_background_anim).into(imageView);
+            Glide.with(this).load(R.drawable.retake_background_qrcode).into(imageView);
             //imageView.setImageBitmap(background);
             if (imgFile.exists())
                 uploadFile(Uri.fromFile(imgFile).toString());
@@ -202,7 +203,7 @@ public class PhotoViewerActivity extends Activity {
                         public void run() {
                             qrImageView.setVisibility(View.VISIBLE);
                             qrImageView.setImageBitmap(qrImage);
-                            Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.photo_viewer_qrcode_background);
+                            Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.photo_viewer_qrcode_background_qrcode);
                             imageView.setImageBitmap(background);
                             imageView.setImageAlpha(125);
                             photoImageView.setImageAlpha(125);

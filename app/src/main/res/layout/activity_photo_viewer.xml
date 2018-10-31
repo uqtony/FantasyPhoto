@@ -27,7 +27,7 @@
     <ImageView
         android:id="@+id/photoImageView"
         android:layout_width="345dp"
-        android:layout_height="460dp"
+        android:layout_height="345dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"

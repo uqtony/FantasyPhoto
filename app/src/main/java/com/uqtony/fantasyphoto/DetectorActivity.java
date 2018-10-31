@@ -119,7 +119,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final boolean MAINTAIN_ASPECT = MODE == DetectorMode.YOLO;
 
 //  private static final Size DESIRED_PREVIEW_SIZE = new Size(1440, 1080);
-  private static final Size DESIRED_PREVIEW_SIZE = new Size(1920, 1080);
+  private static final Size DESIRED_PREVIEW_SIZE = new Size(800, 600);
 
   private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
@@ -302,6 +302,21 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   HandSwipeChecker handSwipeChecker;
   Bitmap resultBitmap;
 
+  Bitmap combinePhotoWithFrame(Bitmap photo, Bitmap frame)
+  {
+    Bitmap res = frame.copy(Config.ARGB_8888,true);
+    Canvas canvas = new Canvas(res);
+    int offsetX = 258, offsetY = 151;
+    int scale = 100;
+    int scaleX = photo.getWidth() > photo.getHeight()?scale:0;
+    int scaleY = scaleX == 0? scale: 0;
+    canvas.drawBitmap(photo, new Rect(0,0,photo.getWidth(), photo.getHeight()),
+            new Rect(offsetX - scaleX,offsetY - scaleY, offsetX+815 + scaleX, offsetY+1085+ scaleY)
+    , new Paint());
+    canvas.drawBitmap(frame, 0, 0, new Paint());
+    return res;
+  }
+
   @Override
   protected void processImage() {
 
@@ -325,9 +340,18 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     int isHandSwipe = 0;
     if (countDown < 0) {
       //if (isWelcomPage || !isRetakePage)
-        isHandSwipe = handSwipeChecker.isSwipe((int) tracker.lastDominantRect.centerX(), (int) tracker.lastDominantRect.centerY());
+        //isHandSwipe = handSwipeChecker.isSwipe((int) tracker.lastDominantRect.centerX(), (int) tracker.lastDominantRect.centerY());
+        isHandSwipe = handSwipeChecker.isSwipeInDistance((int) tracker.lastDominantRect.centerX(), (int) tracker.lastDominantRect.centerY());
       //else
       //  isHandSwipe = handSwipeChecker.isSwipeFromCenter((int) tracker.lastDominantRect.centerX(), (int) tracker.lastDominantRect.centerY());
+      if (isWelcomPage) {
+        isHandSwipe = isQRCodeSmileDetected?1:0;
+        isQRCodeSmileDetected = false;
+      }
+      if (isRetakePage) {
+        isHandSwipe = isQRCodeRetryDetected?1:0;
+        isQRCodeRetryDetected = false;
+      }
     }
     if (isHandSwipe != 0) {
       if (isWelcomPage) {
@@ -404,8 +428,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 //
 //        }
 //      });
-      _canvas.drawBitmap(photoFrame, new Rect(0, 0, photoFrame.getWidth(), photoFrame.getHeight()), new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Paint());
-      String path = ImageUtils.saveBitmap(bitmap);
+      //_canvas.drawBitmap(photoFrame, new Rect(0, 0, photoFrame.getWidth(), photoFrame.getHeight()), new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Paint());
+      resultBitmap = combinePhotoWithFrame(resultBitmap, photoFrame);
+      String path = ImageUtils.saveBitmap(resultBitmap);
 
       LOGGER.i("Save photo to "+path);
       showRetakePage();
@@ -551,7 +576,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     Glide.with(this).load(PhotoFrameManager.getInst(this).getCurrentPhotoAnimFrameId()).apply(
             new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)).into(animFrameImageView);
 
-
     Display display = getWindowManager().getDefaultDisplay();
     Point size = new Point();
     display.getSize(size);
@@ -577,11 +601,17 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       public void run(){
         try {
           while (countDown >= 0) {
-
-            sleep(1000);
+            if (countDown == 1) {
+              // Take shot earlier
+              sleep(800);
+              takeShot();
+              sleep(200);
+            }
+            else
+              sleep(1000);
             countDown--;
           }
-          takeShot();
+          //takeShot();
         }catch (InterruptedException e){
           e.printStackTrace();
         }
@@ -610,7 +640,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   protected void showWelcomePage(){
     if (welcomeImageView == null) {
       welcomeImageView = findViewById(R.id.welcomeImageView);
-      Glide.with(this).load(R.drawable.welcome).into(welcomeImageView);
+      //Glide.with(this).load(R.drawable.welcome).into(welcomeImageView);
+      Glide.with(this).load(R.drawable.welcome_qrcode).into(welcomeImageView);
     }
     if (welcomeImageView != null) {
       welcomeImageView.setVisibility(View.VISIBLE);
@@ -695,11 +726,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         //Bitmap result = PhotoFrameManager.drawColorFrame(resultBitmap, Color.WHITE);
         Bitmap result =  resultBitmap;
         retakeImageView.setVisibility(View.VISIBLE);
-        retakePhotoFrameImageView.setVisibility(View.VISIBLE);
+        //retakePhotoFrameImageView.setVisibility(View.VISIBLE);
         retakeBGImageView.setVisibility(View.VISIBLE);
         retakeImageView.setImageBitmap(result);
-        Glide.with(DetectorActivity.this).load(PhotoFrameManager.getInst(DetectorActivity.this).getCurrentPhotoAnimFrameId()).into(retakePhotoFrameImageView);
-        Glide.with(DetectorActivity.this).asGif().load(R.drawable.retake_background_anim).into(retakeBGImageView);
+        //Glide.with(DetectorActivity.this).load(PhotoFrameManager.getInst(DetectorActivity.this).getCurrentPhotoAnimFrameId()).into(retakePhotoFrameImageView);
+        //Glide.with(DetectorActivity.this).asGif().load(R.drawable.retake_background_anim).into(retakeBGImageView);
+        Glide.with(DetectorActivity.this).load(R.drawable.retake_background_qrcode).into(retakeBGImageView);
       }
     });
     startRetakeCountDown();
@@ -716,6 +748,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     });
   }
 
+  volatile boolean isDelayRetakPage = false;
+
   protected void startRetakeCountDown() {
     if (retakeCountDownThread == null || !retakeCountDownThread.isAlive()){
       retakeCountDownThread = new Thread(){
@@ -723,6 +757,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         public void run() {
           int count = 0;
           try {
+            isDelayRetakPage = true;
+            Thread.sleep(200);
+            isDelayRetakPage = false;
             while(count++ < RETAKE_COUNT_DOWN_INTERVAL || PhotoFrameManager.getInst(DetectorActivity.this).isMakingGif()) {
               Thread.sleep(1000);
               int res = RETAKE_COUNT_DOWN_INTERVAL - count;
@@ -742,6 +779,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   }
 
   protected void stopRetakeCountDown() {
+    if (isDelayRetakPage)
+      return;
     isRetakePage = false;
     if (retakeCountDownThread != null && retakeCountDownThread.isAlive()){
       retakeCountDownThread.interrupt();
@@ -759,12 +798,36 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     });
   }
 
+  volatile boolean isQRCodeSmileDetected = false, isQRCodeRetryDetected = false;
+  volatile boolean isWelcomePageCoolDown = false;
+  long enterWelcomePageTime = 0;
+  static final long WELCOMEPAGE_COOL_DOWN_TIME = 3000;
+
   @Override
   public void onQRCodeRead(String text, ResultPoint[] points)
   {
       LOGGER.i("onQRCodeRead, result=%s", text);
-    if(!isWelcomPage && !isRetakePage && text.equals("smile")){
-      startCountDown();
+      if (text.equals("smile")) {
+        if(!isWelcomPage && !isRetakePage){
+          long currentTime = System.currentTimeMillis();
+          if ((currentTime - enterWelcomePageTime) > WELCOMEPAGE_COOL_DOWN_TIME) {
+            isWelcomePageCoolDown = false;
+            enterWelcomePageTime = 0;
+          }
+          if (!isWelcomePageCoolDown) {
+            startCountDown();
+          }
+        }// end of if !isWelcomPage && !isRetakePage
+        else if (isWelcomPage) {
+          isQRCodeSmileDetected = true;
+          isWelcomePageCoolDown = true;
+          enterWelcomePageTime = System.currentTimeMillis();
+        }
+      }// end of equals smile
+    if (text.equals("retry")) {
+        if (isRetakePage) {
+          isQRCodeRetryDetected = true;
+        }
     }
   }
 
